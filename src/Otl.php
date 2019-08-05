@@ -1228,7 +1228,7 @@ class Otl
 		if (isset($this->mpdf->OTLtags['Plus'])) {
 			$fp = $this->mpdf->OTLtags['Plus'];
 		}
-		preg_match_all('/([a-zA-Z0-9]{4})/', $fp, $m);
+		preg_match_all('/([a-zA-Z0-9][4])/', $fp, $m);
 		for ($i = 0; $i < count($m[0]); $i++) {
 			$t = $m[1][$i];
 			// Is it a valid tag?
@@ -1241,7 +1241,7 @@ class Otl
 		if (isset($this->mpdf->OTLtags['Minus'])) {
 			$fm = $this->mpdf->OTLtags['Minus'];
 		}
-		preg_match_all('/([a-zA-Z0-9]{4})/', $fm, $m);
+		preg_match_all('/([a-zA-Z0-9][4])/', $fm, $m);
 		for ($i = 0; $i < count($m[0]); $i++) {
 			$t = $m[1][$i];
 			// Is it a valid tag?
@@ -1254,7 +1254,7 @@ class Otl
 		if (isset($this->mpdf->OTLtags['FFPlus'])) {
 			$ffp = $this->mpdf->OTLtags['FFPlus']; // Font Features - may include integer: salt4
 		}
-		preg_match_all('/([a-zA-Z0-9]{4})([\d+]*)/', $ffp, $m);
+		preg_match_all('/([a-zA-Z0-9][4])([\d+]*)/', $ffp, $m);
 		for ($i = 0; $i < count($m[0]); $i++) {
 			$t = $m[1][$i];
 			// Is it a valid tag?
@@ -1267,7 +1267,7 @@ class Otl
 		if (isset($this->mpdf->OTLtags['FFMinus'])) {
 			$ffm = $this->mpdf->OTLtags['FFMinus'];
 		}
-		preg_match_all('/([a-zA-Z0-9]{4})/', $ffm, $m);
+		preg_match_all('/([a-zA-Z0-9][4])/', $ffm, $m);
 		for ($i = 0; $i < count($m[0]); $i++) {
 			$t = $m[1][$i];
 			// Is it a valid tag?
@@ -3101,7 +3101,7 @@ class Otl
 		$ok = true;
 		$matches = [];
 		while ($ok) {
-			$x = ord($dict{$dictptr});
+			$x = ord($dict[$dictptr]);
 			$c = $this->OTLdata[$ptr]['uni'] & 0xFF;
 			if ($x == static::_DICT_INTERMEDIATE_MATCH) {
 //echo "DICT_INTERMEDIATE_MATCH: ".dechex($c).'<br />';
@@ -3120,11 +3120,11 @@ class Otl
 			} elseif ($x == static::_DICT_NODE_TYPE_LINEAR) {
 //echo "DICT_NODE_TYPE_LINEAR: ".dechex($c).'<br />';
 				$dictptr++;
-				$m = ord($dict{$dictptr});
+				$m = ord($dict[$dictptr]);
 				if ($c == $m) {
 					$ptr++;
 					if ($ptr > count($this->OTLdata) - 1) {
-						$next = ord($dict{$dictptr + 1});
+						$next = ord($dict[$dictptr + 1]);
 						if ($next == static::_DICT_INTERMEDIATE_MATCH || $next == static::_DICT_FINAL_MATCH) {
 							// Do not match if next character in text is a Mark
 							if (isset($this->OTLdata[$ptr]['uni']) && strpos($this->GlyphClassMarks, $this->OTLdata[$ptr]['hex']) === false) {
@@ -3142,13 +3142,13 @@ class Otl
 			} elseif ($x == static::_DICT_NODE_TYPE_SPLIT) {
 //echo "DICT_NODE_TYPE_SPLIT ON ".dechex($d).": ".dechex($c).'<br />';
 				$dictptr++;
-				$d = ord($dict{$dictptr});
+				$d = ord($dict[$dictptr]);
 				if ($c < $d) {
 					$dictptr += 5;
 				} else {
 					$dictptr++;
 					// Unsigned long 32-bit offset
-					$offset = (ord($dict{$dictptr}) * 16777216) + (ord($dict{$dictptr + 1}) << 16) + (ord($dict{$dictptr + 2}) << 8) + ord($dict{$dictptr + 3});
+					$offset = (ord($dict[$dictptr]) * 16777216) + (ord($dict[$dictptr + 1]) << 16) + (ord($dict[$dictptr + 2]) << 8) + ord($dict[$dictptr + 3]);
 					$dictptr = $offset;
 				}
 			} else {
@@ -4680,7 +4680,7 @@ class Otl
 				} else {
 					$gpos = '';
 				}
-				$chardata[] = ['char' => $chunkOTLdata['char_data'][$i]['uni'], 'level' => $cel, 'type' => $chardir, 'group' => $chunkOTLdata['group']{$i}, 'GPOSinfo' => $gpos];
+				$chardata[] = ['char' => $chunkOTLdata['char_data'][$i]['uni'], 'level' => $cel, 'type' => $chardir, 'group' => $chunkOTLdata['group'][$i], 'GPOSinfo' => $gpos];
 			}
 		}
 
@@ -5590,7 +5590,7 @@ class Otl
 				if (isset($cOTLdata[$nc]['char_data'][$i]['orig_type'])) {
 					$carac['orig_type'] = $cOTLdata[$nc]['char_data'][$i]['orig_type'];
 				}
-				$carac['group'] = $cOTLdata[$nc]['group']{$i};
+				$carac['group'] = $cOTLdata[$nc]['group'][$i];
 				$carac['chunkid'] = $chunkorder[$nc]; // gives font id and/or object ID
 
 				$maxlevel = max((isset($carac['level']) ? $carac['level'] : 0), $maxlevel);
